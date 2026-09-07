@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>캔디마운틴까지 - M0 프로토타입</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; background: #000; }
+      #app { width: 100vw; height: 100vh; }
+      #hint {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        color: #fff;
+        font-family: sans-serif;
+        font-size: 14px;
+        background: rgba(0,0,0,0.4);
+        padding: 8px 12px;
+        border-radius: 6px;
+        pointer-events: none;
+        line-height: 1.5;
+        white-space: pre-line;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="hint">클릭하여 시작 (포인터 락) | 마우스: 시선 | W: 전진 | Shift: 보법 상승 | Ctrl: 보법 하강</div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
