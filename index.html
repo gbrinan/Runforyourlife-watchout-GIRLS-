@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>캔디마운틴까지 - M0 프로토타입</title>
+    <title>캔디마운틴까지 - M1 프로토타입</title>
     <style>
       html, body { margin: 0; padding: 0; overflow: hidden; background: #000; }
       #app { width: 100vw; height: 100vh; }
@@ -21,11 +21,38 @@
         line-height: 1.5;
         white-space: pre-line;
       }
+      #vignette {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.15s ease-out;
+        background: radial-gradient(ellipse at center, rgba(180,0,0,0) 40%, rgba(140,0,0,0.55) 100%);
+      }
+      #gameover {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background: #000;
+        color: #fff;
+        font-family: sans-serif;
+        z-index: 10;
+      }
+      #gameover h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+      #gameover p { opacity: 0.8; }
     </style>
   </head>
   <body>
     <div id="app"></div>
-    <div id="hint">클릭하여 시작 (포인터 락) | 마우스: 시선 | W: 전진 | Shift: 보법 상승 | Ctrl: 보법 하강</div>
+    <div id="vignette"></div>
+    <div id="hint">클릭하여 시작 (포인터 락) | 마우스: 시선 | W: 전진 | Shift: 보법 상승 | Ctrl: 보법 하강 | E: 히힝 | F: 들이받기 | Q: 뿔의 빛</div>
+    <div id="gameover">
+      <h1>암전...</h1>
+      <p>아무 키나 눌러 새 시드로 다시 시작</p>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
