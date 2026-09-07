@@ -3,7 +3,7 @@
 
 import * as THREE from "three";
 import { seedFromUrl } from "./core/rng";
-import { generateHeightmap } from "./gen/heightmap";
+import { generateHeightmap, sampleHeight } from "./gen/heightmap";
 import { createMaterialContext, getMaterial } from "./gen/material";
 import { createTerrainMesh, createPastelLighting } from "./render/terrain";
 import {
@@ -64,9 +64,18 @@ function ensureAudio() {
 
 // --- 포인터 락 1인칭 조작 ---
 const canvas = renderer.domElement;
+// 포인터락이 거부되는 환경(임베디드 문서 등)에서는 드래그로 시선을 돌린다.
+let dragging = false;
 canvas.addEventListener("click", () => {
-  canvas.requestPointerLock();
   ensureAudio();
+  Promise.resolve()
+    .then(() => canvas.requestPointerLock() as unknown)
+    .catch(() => { /* 포인터락 거부: 드래그 시선 폴백 */ });
+});
+canvas.addEventListener("mousedown", () => { dragging = true; });
+window.addEventListener("mouseup", () => { dragging = false; });
+canvas.addEventListener("mousemove", (e) => {
+  if (document.pointerLockElement !== canvas && dragging) yaw -= e.movementX * 0.003;
 });
 
 document.addEventListener("mousemove", (e) => {
@@ -136,11 +145,11 @@ function animate() {
     elapsedForGait = 0;
   }
 
-  const groundY = terrain.position.y; // 근사치, 정확한 높이 샘플은 생략(성능 우선)
+  const groundY = sampleHeight(heightmap, posX, posZ); // 지형 높이 추종
   const bob = computeBobOffsetMeters(unicornState.gait, elapsedForGait);
   camera.position.set(
     posX,
-    CAMERA_HEAD_HEIGHT_M + bob,
+    groundY + CAMERA_HEAD_HEIGHT_M + bob,
     posZ
   );
   camera.rotation.set(0, yaw, 0);

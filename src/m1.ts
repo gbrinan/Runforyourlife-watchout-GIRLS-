@@ -3,7 +3,7 @@
 // 페이지에는 설명 텍스트를 넣지 않는다(무설명 노출 조건).
 
 import * as THREE from "three";
-import { generateHeightmap } from "./gen/heightmap";
+import { generateHeightmap, sampleHeight } from "./gen/heightmap";
 import { createTerrainMesh, createPastelLighting } from "./render/terrain";
 import { startHeelLoop, createApproachPositionProvider } from "./audio/heels";
 import { playMaidenLaugh } from "./audio/laugh";
@@ -20,8 +20,10 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.set(heightmap.size / 2, 20, heightmap.size / 2 + 80);
-camera.lookAt(heightmap.size / 2, 0, heightmap.size / 2);
+const cx = heightmap.size / 2, cz = heightmap.size / 2;
+const targetY = sampleHeight(heightmap, cx, cz);
+camera.position.set(cx, sampleHeight(heightmap, cx, cz + 80) + 6, cz + 80);
+camera.lookAt(cx, targetY, cz);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -68,8 +70,8 @@ function animate() {
   const radius = 90;
   camera.position.x = heightmap.size / 2 + Math.sin(angle) * radius;
   camera.position.z = heightmap.size / 2 + Math.cos(angle) * radius;
-  camera.position.y = 20;
-  camera.lookAt(heightmap.size / 2, 0, heightmap.size / 2);
+  camera.position.y = sampleHeight(heightmap, camera.position.x, camera.position.z) + 6;
+  camera.lookAt(cx, targetY, cz);
   renderer.render(scene, camera);
 }
 

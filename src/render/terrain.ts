@@ -8,8 +8,8 @@ import { Material, createMaterialContext, getMaterial } from "../gen/material";
 
 const MATERIAL_COLOR: Record<Material, THREE.Color> = {
   [Material.Grass]: new THREE.Color(0x9fe2a0), // 파스텔 초원
-  [Material.Dirt]: new THREE.Color(0xd8b98a), // 파스텔 흙
-  [Material.Gravel]: new THREE.Color(0xb8b3c9), // 파스텔 회보라 자갈
+  [Material.Dirt]: new THREE.Color(0xe6d2a6), // 파스텔 흙
+  [Material.Gravel]: new THREE.Color(0xcfc6dc), // 파스텔 회보라 자갈
   [Material.ShallowWater]: new THREE.Color(0x9fd6e6), // 파스텔 하늘색 여울
   [Material.DeepWater]: new THREE.Color(0x4a6fa5), // 짙은 물색(채도 높은 그림자 계열)
 };
@@ -19,7 +19,7 @@ function applyShadowTint(color: THREE.Color, height: number, maxHeight: number):
   const shadowColor = new THREE.Color(0x6a2a6a); // 채도 높은 보라 그림자
   const t = 1 - height / maxHeight; // 낮을수록 그림자 강하게
   const result = color.clone();
-  result.lerp(shadowColor, Math.max(0, Math.min(0.25, t * 0.25)));
+  result.lerp(shadowColor, Math.max(0, Math.min(0.12, t * 0.12)));
   return result;
 }
 
@@ -89,8 +89,8 @@ export function createTerrainMesh(
 
 /** 파스텔 하늘색과 부드러운 노란 조명을 위한 씬 배경/라이트 헬퍼. */
 export function createPastelLighting(): THREE.Light[] {
-  const hemi = new THREE.HemisphereLight(0xfff6d8, 0x9fe2a0, 1.0);
-  const sun = new THREE.DirectionalLight(0xfff2c0, 0.8);
+  const hemi = new THREE.HemisphereLight(0xfff6d8, 0xbfe8a0, 2.6);
+  const sun = new THREE.DirectionalLight(0xfff2c0, 2.2);
   sun.position.set(100, 150, 50);
   return [hemi, sun];
 }

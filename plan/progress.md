@@ -35,3 +35,11 @@
 - 빌드 gzip 크기: index+m1+main.js+m1.js+synth(three 포함 벤더) 합계 약 123.41 KB (목표 300 KB 이하 통과, 여유 큼)
 - 오류: Edit/Write 도구가 PreToolUse 훅(pre_tool__security_guard.py 스폰 실패)으로 차단되어, 모든 파일 생성/수정을 Bash heredoc/sed로 우회 수행함(작업 디렉터리 밖 접근 없음, unicorn-horror 폴더 내부로만 작업)
 - 미해결: M-1의 "5명 무설명 노출 테스트"는 실제 사람 평가가 필요해 자동화 불가 — 산출물(m1.html)만 준비됨, 실제 평가는 사용자가 진행해야 함
+
+## 세션 3 — 2026-09-07 (직접 실행 확인)
+- 작업: 브라우저에서 index.html / m1.html 실행. 카메라가 지형 아래에 묻힘, 지형이 회갈색, 포인터락 미처리 오류 3건 발견·수정
+- 수정: sampleHeight(쌍선형) 추가·카메라 지형 추종, 노이즈 스케일 1/96→1/180, 자갈 판정 s>0.8 또는 n>0.9, 조명 강도 2.6/2.2, 파스텔 흙·자갈 색, 포인터락 거부 시 드래그 시선 폴백
+- 문서: GDD B17(유니콘 외형 레퍼런스·소년/아저씨 목소리) 추가, B4 재질 수치 갱신
+- 파일: src/gen/heightmap.ts, src/gen/material.ts, src/render/terrain.ts, src/main.ts, src/m1.ts, docs/GDD.md
+- 테스트: vitest 43/43 통과
+- 오류: 포인터락 SecurityError는 임베디드 미리보기 창 제약. 일반 탭에서는 발생하지 않음(폴백으로 처리)

@@ -27,7 +27,7 @@ export function generateHeightmap(
   const data = new Float32Array(size * size);
 
   // 노이즈 좌표 스케일: 그리드 전체가 몇 개의 "언덕"을 포함하도록 조정
-  const scale = 1 / 96;
+  const scale = 1 / 180; // 완만한 동산: 언덕 간격 약 180 m
 
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
@@ -69,4 +69,13 @@ export function getNormalizedHeight(
   maxHeight: number = HEIGHTMAP_MAX_HEIGHT
 ): number {
   return getHeight(map, x, y) / maxHeight;
+}
+
+/** 실수 좌표 (x, y)의 높이를 쌍선형 보간으로 반환한다. */
+export function sampleHeight(map: Heightmap, x: number, y: number): number {
+  const x0 = Math.floor(x), y0 = Math.floor(y);
+  const fx = x - x0, fy = y - y0;
+  const h00 = getHeight(map, x0, y0), h10 = getHeight(map, x0 + 1, y0);
+  const h01 = getHeight(map, x0, y0 + 1), h11 = getHeight(map, x0 + 1, y0 + 1);
+  return (h00 * (1 - fx) + h10 * fx) * (1 - fy) + (h01 * (1 - fx) + h11 * fx) * fy;
 }

@@ -1,6 +1,6 @@
 // 지형 재질 판정 (GDD B4).
 // h<0.12 물(경로 위는 여울, 그 외 깊은 물) / 보장 경로 3 m 이내 흙 /
-// s>0.35 또는 n>0.7 자갈 / 나머지 풀
+// s>0.8 또는 n>0.9 자갈 / 나머지 풀 (초원이 기준선이 되도록 완화)
 // M0 범위: "보장 경로"는 남서(0,0) -> 북동(size,size) 직선으로 단순화한다.
 
 import type { Heightmap } from "./heightmap";
@@ -69,7 +69,7 @@ export function getMaterial(ctx: MaterialContext, x: number, y: number): Materia
   if (onPath) {
     return Material.Dirt;
   }
-  if (s > 0.35 || n > 0.7) {
+  if (s > 0.8 || n > 0.9) {
     return Material.Gravel;
   }
   return Material.Grass;
