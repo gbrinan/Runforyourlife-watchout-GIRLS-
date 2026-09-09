@@ -13,3 +13,5 @@ qa/*.webm
 # Blender automatic backup
 *.blend1
 .omo/
+
+.vercel

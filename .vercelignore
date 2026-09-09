@@ -1,0 +1,10 @@
+qa/
+tests/
+docs/
+plan/
+blender/
+dist/
+coverage/
+*.blend
+*.blend1
+task_plan.md

@@ -194,3 +194,9 @@
 - 타입검사, 18파일 141/141 테스트, 프로덕션 빌드, `git diff --check` 통과. 기존 Three.js 500KB 번들 안내만 유지된다.
 - 실제 Chrome 1280x800과 375x812에서 다섯 카드, 자연 이미지 240x320, 가로 넘침 없음, pageerror 0을 확인했다. 증거는 `qa/threat-variation.cjs`, `qa/threat-variation-results.json`, `qa/threat-*.png`다.
 - 인앱 브라우저의 현재 게임에서도 갤러리를 열어 세라 대비 작은 유나 얼굴과 각 위협 설명 렌더링을 확인했다. 독립 `threat_visual_a`, `threat_visual_b` 검토 모두 PASS.
+
+## Vercel 공유 배포 — 2026-09-09
+
+- `ananks-projects-378bc31c/runforyourlife-watchout-girls` 프로젝트를 생성하고 GitHub 저장소를 연결했다. 프로덕션 별칭은 `https://runforyourlife-watchout-girls.vercel.app/`이다.
+- 공개 별칭 HTTP 200, HTML 3,663바이트를 확인했다. 실제 인앱 브라우저에서 시작 화면을 열고 게임을 시작해 WebGL 학교 지하실, HUD, 탐색 시간 감소를 확인했다.
+- `.vercelignore` 추가 뒤 같은 별칭으로 재배포했다. README에 공개 플레이 링크와 최신 캐릭터 성능을 반영했다.
