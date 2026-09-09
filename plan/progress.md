@@ -200,3 +200,10 @@
 - `ananks-projects-378bc31c/runforyourlife-watchout-girls` 프로젝트를 생성하고 GitHub 저장소를 연결했다. 프로덕션 별칭은 `https://runforyourlife-watchout-girls.vercel.app/`이다.
 - 공개 별칭 HTTP 200, HTML 3,663바이트를 확인했다. 실제 인앱 브라우저에서 시작 화면을 열고 게임을 시작해 WebGL 학교 지하실, HUD, 탐색 시간 감소를 확인했다.
 - `.vercelignore` 추가 뒤 같은 별칭으로 재배포했다. README에 공개 플레이 링크와 최신 캐릭터 성능을 반영했다.
+
+## 캔디마운틴 엔딩 테마곡 — 2026-09-09
+
+- 순수 파형 렌더러와 Web Audio 반복 재생기를 추가하고 EXIT 엔딩에 연결했다. 새 던전은 페이지 재시작으로 이전 소스를 종료하며, 엔딩 탭 숨김/복귀는 AudioContext를 중지/재개한다.
+- 타입검사, 19파일 143/143 테스트, 프로덕션 빌드, `git diff --check` 통과. 메인 gzip은 25.02 kB로 이전 24.33 kB보다 약 0.69 kB 증가했다.
+- 실제 Chrome에서 퍼즐을 풀고 EXIT를 통과했다. `qa/candy-song-results.json`: 제목 캔디마운틴, 7.273초 반복, 파형 peak 0.4357, 출력 peak 0.0826, AudioContext running, pageerror 0.
+- 검증 도구의 고정 이동량 추정으로 상호작용을 놓친 실패가 세 번 있었고 기존 엔딩 도구도 같은 실패를 재현했다. 실제 AudioListener 좌표를 추적하는 방식으로 바꿔 해결했다. 증거는 `qa/candy-song-browser.cjs`, `qa/candy-mountain-song.webm`, `qa/candy-song-ending.png`다.

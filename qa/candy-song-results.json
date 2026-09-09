@@ -1,0 +1,14 @@
+{
+  "seed": "exit-4",
+  "errors": [],
+  "title": "캔디마운틴",
+  "song": {
+    "duration": 7.272708333333333,
+    "loop": true,
+    "peak": 0.43566563725471497,
+    "energy": 0.018751142778567438,
+    "sampleRate": 48000
+  },
+  "meterPeak": 0.08263334631919861,
+  "contextState": "running"
+}

@@ -31,6 +31,7 @@ import {createPuzzle,clueText,exitSealed} from './systems/puzzle';
 import {createPuzzleScene} from './render/puzzle';
 import {createCandyMountain} from './render/candy-mountain';
 import {SCHOOL} from './render/school-palette';
+import {playCandyMountainSong} from './audio/candy-mountain';
 
 const seed=seedFromUrl();
 const layout=createDungeonLayout(seed);
@@ -71,6 +72,7 @@ let running=false, pendingTurn=0, elapsed=0, noise=0, noiseTime=0, actionTime=0;
 let audio:AudioContext|undefined;
 let audioBus:GainNode|undefined;
 let spatial:ReturnType<typeof createEncounterAudio>|undefined;
+let candySong:ReturnType<typeof playCandyMountainSong>|undefined;
 const canvas=renderer.domElement;
 function emit(radius:number) {
   noise=radius;noiseTime=.6;hunt.noise(player,radius);
@@ -120,7 +122,10 @@ document.addEventListener('mousemove',event=>{
     pitch=Math.max(-1.15,Math.min(1.15,pitch-event.movementY*sensitivity));
   }
 });
-document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){if(ending&&audio)void audio.suspend();else pause();}
+  else if(ending&&audio)void audio.resume();
+});
 function attack() {
   if(!running||actionTime>0)return;
   emit(25);actionTime=.5;hud.say('뿔을 내질렀다.');
@@ -201,7 +206,8 @@ function tick(dt:number) {
   if(!moved)gait={...gait,currentSpeed:0};
   if(puzzle.solved&&crossedExit(layout.exit,previousPosition,player)){
     cleared=true;running=false;keys.clear();gait={...gait,currentSpeed:0};pendingTurn=0;
-    document.exitPointerLock();if(audio)void audio.suspend();
+    document.exitPointerLock();
+    if(audio&&audioBus){void audio.resume();candySong?.stop();candySong=playCandyMountainSong(audio,audioBus);}
     ending=createCandyMountain();document.body.classList.add('ending');
     document.querySelector('#app')?.setAttribute('aria-label','무지개빛 캔디마운틴 엔딩');
     hud.show('캔디마운틴',`탈출 성공 · ${Math.floor(gameTime/60)}분 ${Math.floor(gameTime%60)}초. 무지개 너머에서, 다시 그녀의 웃음이 들리는 것 같다.`,'새 던전 시작');
