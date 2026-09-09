@@ -11,6 +11,7 @@ export default defineConfig({
         "src/core/**",
         "src/gen/**",
         "src/entities/**",
+        "src/systems/**",
         "src/audio/hooves.ts",
       ],
     },

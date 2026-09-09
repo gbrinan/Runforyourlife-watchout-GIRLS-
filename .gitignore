@@ -4,3 +4,11 @@ dist/
 .DS_Store
 
 coverage
+
+# Local visual/audio QA evidence
+qa/*.png
+qa/*.jpg
+qa/*.webm
+
+# Blender automatic backup
+*.blend1

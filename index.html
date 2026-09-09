@@ -1,31 +1,27 @@
 <!doctype html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>캔디마운틴까지 - M0 프로토타입</title>
-    <style>
-      html, body { margin: 0; padding: 0; overflow: hidden; background: #000; }
-      #app { width: 100vw; height: 100vh; }
-      #hint {
-        position: fixed;
-        top: 12px;
-        left: 12px;
-        color: #fff;
-        font-family: sans-serif;
-        font-size: 14px;
-        background: rgba(0,0,0,0.4);
-        padding: 8px 12px;
-        border-radius: 6px;
-        pointer-events: none;
-        line-height: 1.5;
-        white-space: pre-line;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="app"></div>
-    <div id="hint">클릭하여 시작 (포인터 락) | 마우스: 시선 | W: 전진 | Shift: 보법 상승 | Ctrl: 보법 하강</div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
-</html>
+<html lang="ko"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="서울의 여고 지하실. 여고생들의 소환의식으로 깨어난 유니콘의 코믹 호러 탈출." />
+<title>캔디마운틴까지 · 은목여고 지하실</title><link rel="stylesheet" href="/src/ui/style.css" />
+</head><body>
+<main id="app" aria-label="1인칭 유니콘 서바이벌 게임"></main>
+<div class="mane" aria-hidden="true"></div><div class="tail" aria-hidden="true"></div><div class="horn" aria-hidden="true"></div>
+<section id="hud" class="panel" aria-label="이동 상태">
+<div id="stats">이동 대기 · 돌바닥</div><label for="stamina">숨 고르기</label> <meter id="stamina" min="0" max="100" low="30" high="60" optimum="100" value="100">100</meter><div id="seed"></div><div id="spawn-status"></div><div id="objective">목표 · EXIT 밖으로 탈출</div>
+</section>
+<aside id="stalker-status" class="panel" role="status">집착녀 이브 · 잠들어 있음</aside>
+<div id="instructions" class="panel"><span>WASD 이동 · Q/E 좌우 시점</span><span>Space 점프 · Shift 달리기 · Ctrl 살금살금</span><span>F 들이받기 · H 히힝 · R 상호작용</span><span>마우스 / 방향키 시선 · Esc 설정</span><span id="interaction"></span><span id="puzzle-hint"></span></div>
+<div id="rear-veil" aria-hidden="true"></div><p id="rear-warning" role="status">뒤에서 쫓아온다 · 돌아보세요</p>
+<div id="crosshair" aria-hidden="true">·</div>
+<p id="subtitle" class="panel" role="status">돌바닥은 작은 발굽 소리도 멀리 퍼뜨립니다.</p>
+<section id="overlay" aria-labelledby="overlay-title"><div class="panel intro">
+<p class="eyebrow">서울 · 은목여자고등학교 · B1</p><h1 id="overlay-title">소환은 성공했다.</h1>
+<p id="overlay-description">야자가 끝난 뒤, 여고생들이 당신을 불렀다.<br />눈을 뜨니 학생들은 없고 분필 원만 남았다.<br />당신은 소환된 유니콘이다.<br />비문과 세 종의 봉인을 풀고 EXIT로 나가라.</p>
+<div class="settings"><label for="sensitivity">마우스 감도 <input id="sensitivity" type="range" min="0.5" max="2" step="0.1" value="1" /></label><label class="toggle"><input id="camera-bob" type="checkbox" /> 걸을 때 화면 흔들림</label></div>
+<p class="small">WASD 이동 · Q/E 시점 회전<br />Space 점프 · Shift 달리기 · F 들이받기</p>
+<p class="small">R로 가챠를 돌려 적을 유인하세요.<br />집착녀는 청록색 봉인진으로 유인한 뒤<br />진 안에 있을 때 들이받아야 사라집니다.</p>
+<button id="new-map" type="button" class="secondary">새 던전 생성</button>
+<button id="cast-open" type="button" class="secondary">등장인물 · 약점 보기</button>
+<button id="start" type="button">지하실에서 깨어나기</button><p class="small">키보드·마우스용 던전 체험 · 이어폰 권장</p>
+</div></section><dialog id="cast" aria-labelledby="cast-title"><header><h2 id="cast-title">지하실의 여인들</h2><button id="cast-close" type="button">닫기</button></header><p>외형도, 당신을 쫓는 방식도 다릅니다.</p><div id="cast-grid"></div><p class="small">이브: 소리나 시야로 깨어나면 끝까지 추격합니다. 일반 공격은 잠시 멈출 뿐, 청록색 봉인진 안에서 들이받아야 봉인됩니다.</p></dialog><script type="module" src="/src/main.ts"></script>
+</body></html>

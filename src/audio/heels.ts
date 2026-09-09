@@ -2,7 +2,7 @@
 // 노이즈 버스트 15ms + 대역통과 2~4kHz(Q8) + 재질별 짧은 공명.
 // M-1 실험에서는 3D 오디오(PannerNode HRTF)로 접근하는 느낌을 낸다.
 
-import { playNoiseBurst } from "./synth";
+import { playNoiseBurst, playDecayingSine } from "./synth";
 
 export interface HeelClickOptions {
   /** 재생 간격(초). GDD B5: 배회 0.6s, 경계 0.45s, 추격 0.3s */
@@ -18,11 +18,12 @@ export function playHeelClick(
   bandpassFreq = 3000
 ): void {
   playNoiseBurst(ctx, destination, {
-    duration: 0.015,
+    duration: 0.03,
     bandpassFreq,
-    q: 8,
-    gain: 0.4,
+    q: 2,
+    gain: 0.8,
   });
+  playDecayingSine(ctx,destination,{frequency:1450,duration:.09,gain:.3});
 }
 
 /**
