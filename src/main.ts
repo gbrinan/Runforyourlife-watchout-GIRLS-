@@ -108,8 +108,6 @@ document.addEventListener('mousemove',event=>{
     pitch=Math.max(-1.15,Math.min(1.15,pitch-event.movementY*sensitivity));
   }
 });
-document.addEventListener('pointerlockchange',()=>{if(!document.pointerLockElement)pause();});
-window.addEventListener('blur',pause);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
 function attack() {
   if(!running||actionTime>0)return;
