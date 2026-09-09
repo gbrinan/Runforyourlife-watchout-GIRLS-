@@ -1,0 +1,93 @@
+[
+  {
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "cards": [
+      {
+        "name": "세라",
+        "description": "핑크 단발 · 글래머",
+        "detail": "보통 · 균형형 추격\n추격 2.4 m/s · 잡기 예고 0.8초\n모퉁이에서 시야를 끊으세요",
+        "imageWidth": 240,
+        "imageHeight": 320
+      },
+      {
+        "name": "유나",
+        "description": "흑발 장발 · 슬렌더",
+        "detail": "빠름 · 끈질긴 출석 추격\n추격 2.9 m/s · 잡기 예고 0.7초\n모퉁이에서 시야를 끊으세요",
+        "imageWidth": 240,
+        "imageHeight": 320
+      },
+      {
+        "name": "린",
+        "description": "은발 숏컷 · 슬렌더",
+        "detail": "느림 · 빈틈이 큰 수색형\n추격 2.1 m/s · 잡기 예고 0.9초\n모퉁이에서 시야를 끊으세요",
+        "imageWidth": 240,
+        "imageHeight": 320
+      },
+      {
+        "name": "로제",
+        "description": "핑크 장발 · 글래머",
+        "detail": "매우 빠름 · 넓은 잡기 범위\n추격 3.2 m/s · 잡기 예고 0.65초\n모퉁이에서 시야를 끊으세요",
+        "imageWidth": 240,
+        "imageHeight": 320
+      },
+      {
+        "name": "이브",
+        "description": "백금 장발 · 집착녀",
+        "detail": "최고 속도 · 봉인진에서만 제압\n추격 3.5 m/s · 잡기 예고 0.6초\n봉인진 안에서만 들이받아 봉인",
+        "imageWidth": 240,
+        "imageHeight": 320
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "viewport": {
+      "width": 375,
+      "height": 812
+    },
+    "cards": [
+      {
+        "name": "세라",
+        "description": "핑크 단발 · 글래머",
+        "detail": "보통 · 균형형 추격\n추격 2.4 m/s · 잡기 예고 0.8초\n모퉁이에서 시야를 끊으세요",
+        "imageWidth": 240,
+        "imageHeight": 320
+      },
+      {
+        "name": "유나",
+        "description": "흑발 장발 · 슬렌더",
+        "detail": "빠름 · 끈질긴 출석 추격\n추격 2.9 m/s · 잡기 예고 0.7초\n모퉁이에서 시야를 끊으세요",
+        "imageWidth": 240,
+        "imageHeight": 320
+      },
+      {
+        "name": "린",
+        "description": "은발 숏컷 · 슬렌더",
+        "detail": "느림 · 빈틈이 큰 수색형\n추격 2.1 m/s · 잡기 예고 0.9초\n모퉁이에서 시야를 끊으세요",
+        "imageWidth": 240,
+        "imageHeight": 320
+      },
+      {
+        "name": "로제",
+        "description": "핑크 장발 · 글래머",
+        "detail": "매우 빠름 · 넓은 잡기 범위\n추격 3.2 m/s · 잡기 예고 0.65초\n모퉁이에서 시야를 끊으세요",
+        "imageWidth": 240,
+        "imageHeight": 320
+      },
+      {
+        "name": "이브",
+        "description": "백금 장발 · 집착녀",
+        "detail": "최고 속도 · 봉인진에서만 제압\n추격 3.5 m/s · 잡기 예고 0.6초\n봉인진 안에서만 들이받아 봉인",
+        "imageWidth": 240,
+        "imageHeight": 320
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "errors": []
+  }
+]

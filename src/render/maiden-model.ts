@@ -37,6 +37,7 @@ export function createMaidenModel(look:MaidenLook=MAIDEN_LOOKS[1]) {
   ellipsoid(group,trim,0,1.32,curvy?.20:.158,.023,.026,.018);
   for(const y of [1.23,1.29])ellipsoid(group,trim,0,y,curvy?.182:.146,.013,.013,.012);
   const head=new THREE.Group();head.position.y=1.65;group.add(head);
+  head.scale.setScalar(look.faceScale);
   ellipsoid(head,skin,0,0,0,.175,.223,.151);
   // Narrow chin and ears keep the face adult rather than chibi.
   ellipsoid(head,skin,0,-.11,.023,.124,.126,.116);

@@ -21,7 +21,7 @@ export function createCastGallery() {
       const image=document.createElement('img');image.src=renderer.domElement.toDataURL('image/png');image.width=240;image.height=320;image.alt=look.description;
       const name=document.createElement('h3');name.textContent=look.name;
       const description=document.createElement('p');description.textContent=look.description;
-      const detail=document.createElement('p');detail.className='small';detail.textContent=look===STALKER_LOOK?'강적 · 시야를 끊어도 추격\n봉인진 안에서만 들이받아 봉인':'소리와 발자국을 따라 접근\n모퉁이에서 시야를 끊으세요';
+      const detail=document.createElement('p');detail.className='small';detail.textContent=`${look.threat}\n추격 ${look.combat.chaseSpeed.toFixed(1)} m/s · 잡기 예고 ${look.combat.lungeTime.toFixed(2).replace(/0$/,'')}초${look===STALKER_LOOK?'\n봉인진 안에서만 들이받아 봉인':'\n모퉁이에서 시야를 끊으세요'}`;
       card.append(image,name,description,detail);grid.append(card);scene.remove(model.group);
       model.group.traverse(node=>{if(node instanceof THREE.Mesh){node.geometry.dispose();const materials=Array.isArray(node.material)?node.material:[node.material];for(const material of materials){if(material instanceof THREE.MeshBasicMaterial)material.map?.dispose();material.dispose();}}});
     }

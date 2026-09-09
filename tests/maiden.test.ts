@@ -1,9 +1,29 @@
 import { describe, expect, it } from 'vitest';
 import { createMaiden, hearNoise, heelInterval, ramMaiden, updateMaiden } from '../src/entities/maiden';
+import { MAIDEN_LOOKS, STALKER_LOOK } from '../src/entities/maiden-variants';
 
 const hidden = { player: { x: 50, z: 50 }, visible: false, allowChase: true };
 
 describe('maiden perception and pursuit', () => {
+  it('gives Yuna, Rose, and Eve smaller faces and stronger pursuit profiles', () => {
+    const sera = MAIDEN_LOOKS.find(look => look.name === '세라')!;
+    const yuna = MAIDEN_LOOKS.find(look => look.name === '유나')!;
+    const rose = MAIDEN_LOOKS.find(look => look.name === '로제')!;
+    for (const threat of [yuna, rose, STALKER_LOOK]) {
+      expect(threat.faceScale).toBeLessThan(sera.faceScale);
+      expect(threat.combat.chaseSpeed).toBeGreaterThan(sera.combat.chaseSpeed);
+      expect(threat.combat.lungeTime).toBeLessThan(sera.combat.lungeTime);
+      expect(threat.combat.grabReach).toBeGreaterThanOrEqual(sera.combat.grabReach);
+    }
+    expect(new Set([yuna.combat.chaseSpeed, rose.combat.chaseSpeed, STALKER_LOOK.combat.chaseSpeed]).size).toBe(3);
+  });
+  it('moves with the selected character pursuit profile', () => {
+    const rose = MAIDEN_LOOKS.find(look => look.name === '로제')!;
+    const maiden = createMaiden({ x: 0, z: 0 }, rose.combat);
+    updateMaiden(maiden, { player: { x: 10, z: 0 }, visible: true, allowChase: true }, 1);
+    expect(maiden.x).toBeCloseTo(rose.combat.chaseSpeed);
+    expect(heelInterval('chase', maiden.tuning)).toBeLessThan(heelInterval('chase'));
+  });
   it.each([0, -1])('ignores silent noise radius %s even when overlapping', (radius) => {
     const maiden = createMaiden({ x: 0, z: 0 });
     hearNoise(maiden, { position: { x: 0, z: 0 }, radius });

@@ -62,7 +62,7 @@ export function createEncounterAudio(ctx:AudioContext,map:Heightmap,destination:
       if(maiden.mode==='notice'&&channel.remaining<=0){playHeelClick(ctx,channel.panner);playWomanVoice(ctx,voiceIndex(maiden),channel.panner);channel.remaining=Infinity;}
       if((maiden.mode==='chase'||maiden.mode==='attack')&&channel.scream<=0&&Math.hypot(maiden.x-player.x,maiden.z-player.z)<30){playScream(ctx,channel.panner);channel.scream=4;onScream();}
       if(channel.remaining<=0) {
-        const interval=heelInterval(maiden.mode);
+        const interval=heelInterval(maiden.mode,maiden.tuning);
         if(Number.isFinite(interval)&&Math.hypot(maiden.x-player.x,maiden.z-player.z)<65) playHeelClick(ctx,channel.panner);
         channel.remaining=Number.isFinite(interval)?interval:.1;
       }

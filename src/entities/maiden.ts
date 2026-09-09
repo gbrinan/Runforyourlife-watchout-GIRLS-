@@ -1,5 +1,21 @@
 export type Point = { readonly x: number; readonly z: number };
 export type MaidenMode = 'wander' | 'alert' | 'notice' | 'chase' | 'lunge' | 'search' | 'attack' | 'stunned';
+export type MaidenTuning = {
+  readonly chaseSpeed: number;
+  readonly lungeTime: number;
+  readonly grabReach: number;
+  readonly attackCooldown: number;
+  readonly stunTime: number;
+  readonly heelCadence: number;
+};
+export const DEFAULT_MAIDEN_TUNING: MaidenTuning = {
+  chaseSpeed: 2.4,
+  lungeTime: .8,
+  grabReach: 1.6,
+  attackCooldown: 2,
+  stunTime: 2,
+  heelCadence: 1,
+};
 
 /** Mutable simulation state, advanced by the fixed-step game loop. Yaw zero faces +Z. */
 export interface Maiden {
@@ -10,10 +26,13 @@ export interface Maiden {
   target: Point;
   timer: number;
   ramHits: number;
+  readonly tuning: MaidenTuning;
 }
 
-export function createMaiden(point: Point): Maiden {
-  return { ...point, yaw: 0, mode: 'wander', target: { x: point.x, z: point.z + 6 }, timer: 0, ramHits: 0 };
+export function createMaiden(point: Point): Maiden;
+export function createMaiden(point: Point, tuning: MaidenTuning): Maiden;
+export function createMaiden(point: Point, tuning: MaidenTuning = DEFAULT_MAIDEN_TUNING): Maiden {
+  return { ...point, yaw: 0, mode: 'wander', target: { x: point.x, z: point.z + 6 }, timer: 0, ramHits: 0, tuning };
 }
 
 export function hearNoise(maiden: Maiden, event: { readonly position: Point; readonly radius: number }): void {
@@ -50,9 +69,9 @@ export function updateMaiden(
     case 'lunge':
       maiden.timer = Math.max(0, maiden.timer - dt);
       if (maiden.timer > Number.EPSILON) return false;
-      if (input.visible && Math.hypot(input.player.x - maiden.x, input.player.z - maiden.z) <= 1.6) {
+      if (input.visible && Math.hypot(input.player.x - maiden.x, input.player.z - maiden.z) <= maiden.tuning.grabReach) {
         maiden.mode = 'attack';
-        maiden.timer = 2;
+        maiden.timer = maiden.tuning.attackCooldown;
         return true;
       }
       maiden.mode = 'chase';
@@ -84,7 +103,7 @@ export function updateMaiden(
   switch (maiden.mode) {
     case 'wander': speed = 1.2; break;
     case 'alert': speed = 1.8; break;
-    case 'chase': speed = 2.4; break;
+    case 'chase': speed = maiden.tuning.chaseSpeed; break;
     case 'search':
       maiden.timer = Math.max(0, maiden.timer - dt);
       if (maiden.timer === 0) maiden.mode = 'wander';
@@ -103,9 +122,9 @@ export function updateMaiden(
     maiden.x += dx / distance * step;
     maiden.z += dz / distance * step;
   }
-  if (maiden.mode === 'chase' && Math.hypot(input.player.x - maiden.x, input.player.z - maiden.z) <= 1.4) {
+  if (maiden.mode === 'chase' && Math.hypot(input.player.x - maiden.x, input.player.z - maiden.z) <= maiden.tuning.grabReach - .2) {
     maiden.mode = 'lunge';
-    maiden.timer = .8;
+    maiden.timer = maiden.tuning.lungeTime;
     return false;
   }
   if (Math.hypot(maiden.target.x - maiden.x, maiden.target.z - maiden.z) <= 0.01) {
@@ -136,24 +155,24 @@ export function ramMaiden(maiden: Maiden, player: Point & { readonly yaw: number
   maiden.ramHits += 1;
   if (maiden.ramHits >= 3) {
     maiden.mode = 'attack';
-    maiden.timer = 2;
+    maiden.timer = maiden.tuning.attackCooldown;
     return 'caught';
   }
   maiden.x += Math.sin(player.yaw) * 3;
   maiden.z += Math.cos(player.yaw) * 3;
   maiden.mode = 'stunned';
-  maiden.timer = 2;
+  maiden.timer = maiden.tuning.stunTime;
   return 'pushed';
 }
 
-export function heelInterval(mode: MaidenMode): number {
+export function heelInterval(mode: MaidenMode, tuning: MaidenTuning = DEFAULT_MAIDEN_TUNING): number {
   switch (mode) {
-    case 'wander': return 0.6;
-    case 'alert': return 0.45;
+    case 'wander': return 0.6 * tuning.heelCadence;
+    case 'alert': return 0.45 * tuning.heelCadence;
     case 'notice': return Infinity;
-    case 'chase': return 0.3;
+    case 'chase': return 0.3 * tuning.heelCadence;
     case 'lunge': return Infinity;
-    case 'search': return 0.45;
+    case 'search': return 0.45 * tuning.heelCadence;
     case 'attack':
     case 'stunned': return Infinity;
     default: return assertNever(mode);

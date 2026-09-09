@@ -5,6 +5,12 @@ import { createStalker,alertStalker,updateStalker,ramStalker,sealPositions,insid
 describe('relentless stalker and sealing ritual',()=>{
   const layout=createDungeonLayout('stalker-test');
   const center=layout.start;
+  it('uses Eve\'s fastest and strongest threat profile',()=>{
+    const stalker=createStalker(layout.spawns[3]);
+    expect(stalker.body.tuning.chaseSpeed).toBeGreaterThan(3);
+    expect(stalker.body.tuning.lungeTime).toBeGreaterThanOrEqual(.6);
+    expect(stalker.body.tuning.lungeTime).toBeLessThan(.8);
+  });
   it('stays dormant when no sight or sound reaches her',()=>{
     const stalker=createStalker(layout.spawns[3]);
     updateStalker(stalker,layout,center,1);
@@ -31,7 +37,7 @@ describe('relentless stalker and sealing ritual',()=>{
   it('only briefly repels her outside a seal even after prior attacks',()=>{
     const stalker=createStalker({x:center.x+1,z:center.z});stalker.body.ramHits=5;
     const result=ramStalker(stalker,layout,{...center,yaw:Math.PI/2},[]);
-    expect(result).toBe('repelled');expect(stalker.sealed).toBe(false);expect(stalker.body.timer).toBe(.7);
+    expect(result).toBe('repelled');expect(stalker.sealed).toBe(false);expect(stalker.body.timer).toBe(stalker.body.tuning.stunTime);
     updateStalker(stalker,layout,center,1);updateStalker(stalker,layout,center,.01);
     expect(stalker.body.mode).toBe('chase');
   });

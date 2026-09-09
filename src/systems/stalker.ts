@@ -3,13 +3,14 @@ import type { Point } from '../entities/maiden';
 import { dungeonWaypoint, hasDungeonSight, isDungeonBlocked } from '../gen/dungeon';
 import type { DungeonLayout } from '../gen/dungeon';
 import { ramInDungeon } from './dungeon-combat';
+import { STALKER_LOOK } from '../entities/maiden-variants';
 
 export const SEAL_RADIUS=1.6;
 export function sealPositions(layout:DungeonLayout):readonly Point[] {
   return [layout.rooms[0],layout.rooms[3]].map(room=>({x:room.x+room.width/2,z:room.z+room.depth/2}));
 }
 export function createStalker(point:Point) {
-  return {body:createMaiden(point),awakened:false,sealed:false};
+  return {body:createMaiden(point,STALKER_LOOK.combat),awakened:false,sealed:false};
 }
 export type Stalker=ReturnType<typeof createStalker>;
 export function insideSeal(point:Point,seals:readonly Point[]):boolean {
@@ -31,7 +32,7 @@ export function updateStalker(stalker:Stalker,layout:DungeonLayout,player:Point,
   }else if(body.mode==='lunge'){
     body.timer=Math.max(0,body.timer-dt);
     if(body.timer>Number.EPSILON)return false;
-    if(Math.hypot(body.x-player.x,body.z-player.z)<=1.6&&hasDungeonSight(layout,body,player)){body.mode='attack';body.timer=2;return true;}
+    if(Math.hypot(body.x-player.x,body.z-player.z)<=body.tuning.grabReach&&hasDungeonSight(layout,body,player)){body.mode='attack';body.timer=body.tuning.attackCooldown;return true;}
     body.mode='chase';
   }else if(body.timer>0){body.timer=Math.max(0,body.timer-dt);return false;}
   body.mode='chase';body.target={...player};
@@ -39,12 +40,12 @@ export function updateStalker(stalker:Stalker,layout:DungeonLayout,player:Point,
   const dx=waypoint.x-body.x,dz=waypoint.z-body.z,distance=Math.hypot(dx,dz);
   if(distance>.001){
     body.yaw=Math.atan2(dx,dz);
-    const step=Math.min(distance,2.8*dt);
+    const step=Math.min(distance,body.tuning.chaseSpeed*dt);
     const next={x:body.x+dx/distance*step,z:body.z+dz/distance*step};
     if(!isDungeonBlocked(layout,next)){body.x=next.x;body.z=next.z;}
   }
-  if(Math.hypot(body.x-player.x,body.z-player.z)<=1.4&&hasDungeonSight(layout,body,player)) {
-    body.mode='lunge';body.timer=.8;return false;
+  if(Math.hypot(body.x-player.x,body.z-player.z)<=body.tuning.grabReach-.2&&hasDungeonSight(layout,body,player)) {
+    body.mode='lunge';body.timer=body.tuning.lungeTime;return false;
   }
   return false;
 }
@@ -56,6 +57,6 @@ export function ramStalker(stalker:Stalker,layout:DungeonLayout,player:Point&{re
   if(result!=='pushed')return 'miss';
   stalker.awakened=true;
   if(vulnerable){stalker.sealed=true;stalker.body.mode='stunned';stalker.body.timer=Infinity;return 'sealed';}
-  stalker.body.timer=.7;
+  stalker.body.timer=stalker.body.tuning.stunTime;
   return 'repelled';
 }

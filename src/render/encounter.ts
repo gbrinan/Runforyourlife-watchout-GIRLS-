@@ -10,8 +10,8 @@ import type { Track } from '../systems/tracks';
 
 export function createEncounter(map:Heightmap,spawns:readonly Point[],lookOffset=0) {
   const group=new THREE.Group();
-  const maidens=spawns.map(createMaiden);
-  const looks=maidens.map((_,index)=>MAIDEN_LOOKS[(index+lookOffset)%MAIDEN_LOOKS.length]);
+  const looks=spawns.map((_,index)=>MAIDEN_LOOKS[(index+lookOffset)%MAIDEN_LOOKS.length]);
+  const maidens=spawns.map((spawn,index)=>createMaiden(spawn,looks[index].combat));
   const models=maidens.map((maiden,index)=>{
     maiden.yaw=-Math.PI/2;maiden.target={...maiden};
     const model=createMaidenModel(looks[index]);group.add(model.group);return model;
