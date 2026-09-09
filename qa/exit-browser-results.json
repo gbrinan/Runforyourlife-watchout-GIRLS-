@@ -1,0 +1,9 @@
+{
+  "seed": "exit-4",
+  "before": false,
+  "title": "탈출 성공!",
+  "description": "EXIT를 통과했습니다. 소요 시간 0분 26초. 새로운 지하실이 기다립니다.",
+  "frozen": true,
+  "newSeed": "시드 1788739234232",
+  "errors": []
+}

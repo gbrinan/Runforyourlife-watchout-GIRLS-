@@ -1,0 +1,40 @@
+{
+  "captures": [
+    "qa/school-1280-intro.png",
+    "qa/school-1280-play.png",
+    "qa/school-1280-side.png",
+    "qa/school-1280-ritual.png",
+    "qa/school-1280-paused.png",
+    "qa/school-768-intro.png",
+    "qa/school-768-play.png",
+    "qa/school-768-ritual.png",
+    "qa/school-375-intro.png",
+    "qa/school-375-play.png",
+    "qa/school-375-ritual.png"
+  ],
+  "errors": [],
+  "checks": [
+    {
+      "before": {
+        "x": 8,
+        "z": 29.5,
+        "fx": -0.7432941198348999,
+        "fz": -0.6689647436141968
+      },
+      "turned": {
+        "x": 8,
+        "z": 29.5,
+        "fx": -0.9993005394935608,
+        "fz": 0.037396177649497986
+      },
+      "moved": {
+        "x": 6.450684547424316,
+        "z": 29.557979583740234,
+        "fx": -0.9993005394935608,
+        "fz": 0.037396177649497986
+      },
+      "turnDistance": 0,
+      "moveDistance": 1.5503999496002592
+    }
+  ]
+}

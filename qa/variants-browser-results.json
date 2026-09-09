@@ -1,0 +1,24 @@
+[
+  {
+    "galleryCount": 5
+  },
+  {
+    "sealed": "이브 봉인 완료",
+    "feedback": "이브를 봉인했다. 이제 더는 따라오지 않는다."
+  },
+  {
+    "outsideSeal": "이브 추격 중 · 봉인진으로 유인하세요",
+    "feedback": "잠깐 멈췄을 뿐이다! 청록색 봉인진으로 유인하세요."
+  },
+  {
+    "width": 768,
+    "overflow": false
+  },
+  {
+    "width": 375,
+    "overflow": false
+  },
+  {
+    "errors": []
+  }
+]

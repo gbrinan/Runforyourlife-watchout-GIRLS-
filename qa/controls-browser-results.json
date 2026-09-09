@@ -1,0 +1,50 @@
+[
+  {
+    "input": "KeyW",
+    "moving": "속보 · 3.0 m/s · 돌바닥 · 무음"
+  },
+  {
+    "input": "KeyS",
+    "moving": "속보 · 3.0 m/s · 돌바닥 · 무음"
+  },
+  {
+    "input": "KeyA",
+    "moving": "속보 · 3.0 m/s · 돌바닥 · 무음"
+  },
+  {
+    "input": "KeyD",
+    "moving": "속보 · 3.0 m/s · 돌바닥 · 무음"
+  },
+  {
+    "input": "Shift + W",
+    "moving": "질주 · 8.0 m/s · 돌바닥 · 무음"
+  },
+  {
+    "input": "Ctrl + W",
+    "moving": "서행 · 1.5 m/s · 돌바닥 · 소음 40 m"
+  },
+  {
+    "input": "Space",
+    "result": "뿔을 내질렀다."
+  },
+  {
+    "input": "Escape",
+    "result": "잠깐 숨 고르기",
+    "sensitivity": "0.7"
+  },
+  {
+    "input": "Space near enemy",
+    "result": "밀어냈다. 지금 도망쳐!"
+  },
+  {
+    "width": 375,
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "overflow": false
+  },
+  {
+    "pageErrors": []
+  }
+]
