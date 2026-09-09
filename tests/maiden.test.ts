@@ -46,9 +46,18 @@ describe('maiden perception and pursuit', () => {
     expect(attacked).toBe(false);
     expect(maiden.mode).toBe('wander');
   });
-  it('attacks on contact when visible', () => {
+  it('telegraphs a grab before contact can hurt the player', () => {
     const maiden = createMaiden({ x: 0, z: 0 });
-    expect(updateMaiden(maiden, { player: { x: 1, z: 0 }, visible: true, allowChase: true }, 0)).toBe(true);
+    expect(updateMaiden(maiden, { player: { x: 1, z: 0 }, visible: true, allowChase: true }, 0)).toBe(false);
+    expect(maiden.mode).toBe('lunge');
+    expect(updateMaiden(maiden, { player: { x: 1, z: 0 }, visible: true, allowChase: true }, .79)).toBe(false);
+    expect(updateMaiden(maiden, { player: { x: 1, z: 0 }, visible: true, allowChase: true }, .01)).toBe(true);
+  });
+  it('misses a telegraphed grab when the player escapes', () => {
+    const maiden = createMaiden({ x: 0, z: 0 });
+    updateMaiden(maiden, { player: { x: 1, z: 0 }, visible: true, allowChase: true }, 0);
+    expect(updateMaiden(maiden, { player: { x: 4, z: 0 }, visible: true, allowChase: true }, .8)).toBe(false);
+    expect(maiden.mode).toBe('chase');
   });
   it('cannot attack again before the two second cooldown', () => {
     const maiden = createMaiden({ x: 0, z: 0 });
@@ -60,7 +69,8 @@ describe('maiden perception and pursuit', () => {
     const maiden = createMaiden({ x: 0, z: 0 });
     maiden.mode = 'attack';
     maiden.timer = 2;
-    expect(updateMaiden(maiden, { player: { x: 1, z: 0 }, visible: true, allowChase: true }, 2)).toBe(true);
+    expect(updateMaiden(maiden, { player: { x: 1, z: 0 }, visible: true, allowChase: true }, 2)).toBe(false);
+    expect(maiden.mode).toBe('lunge');
   });
 });
 

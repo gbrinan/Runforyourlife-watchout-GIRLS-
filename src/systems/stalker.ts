@@ -24,7 +24,16 @@ export function updateStalker(stalker:Stalker,layout:DungeonLayout,player:Point,
   const visible=Math.hypot(body.x-player.x,body.z-player.z)<18&&hasDungeonSight(layout,body,player);
   if(visible)stalker.awakened=true;
   if(!stalker.awakened)return false;
-  if(body.timer>0){body.timer=Math.max(0,body.timer-dt);return false;}
+  if(body.mode==='notice'){
+    body.timer=Math.max(0,body.timer-dt);
+    if(body.timer>Number.EPSILON)return false;
+    body.mode='chase';
+  }else if(body.mode==='lunge'){
+    body.timer=Math.max(0,body.timer-dt);
+    if(body.timer>Number.EPSILON)return false;
+    if(Math.hypot(body.x-player.x,body.z-player.z)<=1.6&&hasDungeonSight(layout,body,player)){body.mode='attack';body.timer=2;return true;}
+    body.mode='chase';
+  }else if(body.timer>0){body.timer=Math.max(0,body.timer-dt);return false;}
   body.mode='chase';body.target={...player};
   const waypoint=dungeonWaypoint(layout,body,player);
   const dx=waypoint.x-body.x,dz=waypoint.z-body.z,distance=Math.hypot(dx,dz);
@@ -35,7 +44,7 @@ export function updateStalker(stalker:Stalker,layout:DungeonLayout,player:Point,
     if(!isDungeonBlocked(layout,next)){body.x=next.x;body.z=next.z;}
   }
   if(Math.hypot(body.x-player.x,body.z-player.z)<=1.4&&hasDungeonSight(layout,body,player)) {
-    body.mode='attack';body.timer=2;return true;
+    body.mode='lunge';body.timer=.8;return false;
   }
   return false;
 }

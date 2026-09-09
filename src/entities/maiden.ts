@@ -1,5 +1,5 @@
 export type Point = { readonly x: number; readonly z: number };
-export type MaidenMode = 'wander' | 'alert' | 'chase' | 'search' | 'attack' | 'stunned';
+export type MaidenMode = 'wander' | 'alert' | 'notice' | 'chase' | 'lunge' | 'search' | 'attack' | 'stunned';
 
 /** Mutable simulation state, advanced by the fixed-step game loop. Yaw zero faces +Z. */
 export interface Maiden {
@@ -22,7 +22,9 @@ export function hearNoise(maiden: Maiden, event: { readonly position: Point; rea
   switch (maiden.mode) {
     case 'attack':
     case 'stunned':
-    case 'chase': return;
+    case 'notice':
+    case 'chase':
+    case 'lunge': return;
     case 'wander':
     case 'alert':
     case 'search':
@@ -40,6 +42,21 @@ export function updateMaiden(
   dt: number,
 ): boolean {
   switch (maiden.mode) {
+    case 'notice':
+      maiden.timer = Math.max(0, maiden.timer - dt);
+      if (maiden.timer > Number.EPSILON) return false;
+      maiden.mode = 'chase';
+      break;
+    case 'lunge':
+      maiden.timer = Math.max(0, maiden.timer - dt);
+      if (maiden.timer > Number.EPSILON) return false;
+      if (input.visible && Math.hypot(input.player.x - maiden.x, input.player.z - maiden.z) <= 1.6) {
+        maiden.mode = 'attack';
+        maiden.timer = 2;
+        return true;
+      }
+      maiden.mode = 'chase';
+      break;
     case 'stunned':
     case 'attack':
       maiden.timer = Math.max(0, maiden.timer - dt);
@@ -87,9 +104,9 @@ export function updateMaiden(
     maiden.z += dz / distance * step;
   }
   if (maiden.mode === 'chase' && Math.hypot(input.player.x - maiden.x, input.player.z - maiden.z) <= 1.4) {
-    maiden.mode = 'attack';
-    maiden.timer = 2;
-    return true;
+    maiden.mode = 'lunge';
+    maiden.timer = .8;
+    return false;
   }
   if (Math.hypot(maiden.target.x - maiden.x, maiden.target.z - maiden.z) <= 0.01) {
     switch (maiden.mode) {
@@ -133,7 +150,9 @@ export function heelInterval(mode: MaidenMode): number {
   switch (mode) {
     case 'wander': return 0.6;
     case 'alert': return 0.45;
+    case 'notice': return Infinity;
     case 'chase': return 0.3;
+    case 'lunge': return Infinity;
     case 'search': return 0.45;
     case 'attack':
     case 'stunned': return Infinity;

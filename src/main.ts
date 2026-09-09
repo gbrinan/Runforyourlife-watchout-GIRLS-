@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { createRng, seedFromUrl } from './core/rng';
 import { sampleHeight } from './gen/heightmap';
-import { createDungeonLayout, isDungeonBlocked } from './gen/dungeon';
+import { createDungeonLayout, hasDungeonSight, isDungeonBlocked } from './gen/dungeon';
 import { Material } from './gen/material';
 import { createDungeonScene } from './render/dungeon';
 import { createEncounter } from './render/encounter';
@@ -11,14 +11,15 @@ import { createSurvival, updateSurvival, hurt } from './systems/survival';
 import { hoofNoiseRadius } from './systems/noise';
 import { getHoofbeatsInInterval, computeBobOffsetMeters } from './audio/hooves';
 import { playHoofbeat } from './audio/synth';
-import { createEncounterAudio, playVoice } from './audio/encounter';
+import { createEncounterAudio, playVoice, playWomanVoice } from './audio/encounter';
 import { createTracks, recordTrack, expireTracks } from './systems/tracks';
 import { createDungeonAudioBus } from './audio/dungeon';
 import { readMovement, readTurn } from './systems/controls';
 import { sealPositions, ramStalker, insideSeal } from './systems/stalker';
 import { createStalkerScene } from './render/stalker';
 import { createCastGallery } from './ui/cast';
-import {createHunt,rearThreat} from './systems/hunt';
+import {createHunt,rearThreatDirection} from './systems/hunt';
+import {STALKER_LOOK} from './entities/maiden-variants';
 import {createDevices,nearestDevice,activateDevice,lureFor,visionRange,deviceTarget} from './systems/devices';
 import {createDeviceScene} from './render/devices';
 import {playGacha} from './audio/scream';
@@ -44,7 +45,7 @@ renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWid
 document.querySelector('#app')?.appendChild(renderer.domElement);
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;
 const dungeon=createDungeonScene(layout,seed);scene.add(dungeon.group);
-const encounter=createEncounter(map,layout.spawns.slice(0,2),Math.floor(createRng(seed+':looks')()*4));scene.add(encounter.group);
+const encounter=createEncounter(map,layout.spawns.slice(1,3),Math.floor(createRng(seed+':looks')()*4));scene.add(encounter.group);
 const seals=sealPositions(layout);
 const hunt=createHunt(layout,encounter.maidens),stalker=hunt.stalker;
 const devices=createDevices(layout),deviceScene=createDeviceScene(devices);scene.add(deviceScene.group);
@@ -53,13 +54,15 @@ scene.add(createExitScene(layout.exit));
 const puzzle=createPuzzle(layout,seed),puzzleScene=createPuzzleScene(puzzle,layout.exit);scene.add(puzzleScene.group);
 const jump=createJump();let ending:ReturnType<typeof createCandyMountain>|undefined;
 let deviceBeat=0,cleared=false;
-const stalkerScene=createStalkerScene(seals);scene.add(stalkerScene.group);
+stalker.body.yaw=-Math.PI/2;stalker.body.target={...stalker.body};
+const stalkerScene=createStalkerScene(seals,stalker.body);scene.add(stalkerScene.group);
 const cast=createCastGallery();
 const player={...layout.start,yaw:Math.atan2(dungeon.focal.x-layout.start.x,dungeon.focal.z-layout.start.z)};
 let pitch=-.12;camera.rotation.order='YXZ';
 let gait=createInitialUnicornState();
 const survival=createSurvival();
 const tracks=createTracks();let gameTime=0;
+const tableauSeen=[false,false,false];
 const hud=createHud(seed);
 hud.say('서울, 은목여고 지하실. 소환은 성공했고, 학생들은 사라졌다.');
 const keys=new Set<string>();
@@ -72,7 +75,16 @@ const canvas=renderer.domElement;
 function emit(radius:number) {
   noise=radius;noiseTime=.6;hunt.noise(player,radius);
 }
-function voice(adult:boolean) {if(audio&&audioBus)playVoice(audio,adult,audioBus);}
+function voice(low:boolean) {if(audio&&audioBus)playVoice(audio,low,audioBus);}
+function observeTableaux() {
+  const figures=[...encounter.maidens,stalker.body];
+  const looks=[...encounter.looks,STALKER_LOOK];
+  for(const [index,figure] of figures.entries()){
+    if(tableauSeen[index]||hunt.present[index])continue;
+    if(Math.hypot(figure.x-player.x,figure.z-player.z)>10||!hasDungeonSight(layout,player,figure))continue;
+    tableauSeen[index]=true;hunt.observe(index);hud.say(looks[index].observation,6);if(audio&&audioBus)playWomanVoice(audio,index,audioBus);break;
+  }
+}
 function damage() {
   if(!hurt(survival))return;
   emit(20);voice(true);
@@ -91,7 +103,7 @@ function pause() {
 }
 function start() {
   if(survival.hp===0||cleared){location.href=location.pathname;return;}
-  if(!audio){audio=new AudioContext();audioBus=createDungeonAudioBus(audio);spatial=createEncounterAudio(audio,map,audioBus,()=>hud.say('여인의 괴성이 복도를 울린다.'));}
+  if(!audio){audio=new AudioContext();audioBus=createDungeonAudioBus(audio);const figures=[...encounter.maidens,stalker.body];spatial=createEncounterAudio(audio,map,audioBus,()=>hud.say('여인의 괴성이 복도를 울린다.'),maiden=>Math.max(0,figures.indexOf(maiden)));}
   void audio.resume();running=true;hud.hide();
   Promise.resolve().then(()=>canvas.requestPointerLock()).catch((error:unknown)=>{
     if(error instanceof DOMException){hud.say('마우스를 움직여 둘러보세요. 화면 끝에서는 ← → 키도 쓸 수 있습니다.');return;}
@@ -196,8 +208,11 @@ function tick(dt:number) {
     return;
   }
   if(updateSurvival(survival,{gait:gait.gait,moving:moved},dt)) {voice(true);emit(20);hud.say('허억… 낮고 거친 숨이 새어 나왔다.');}
+  observeTableaux();
   const outcome=hunt.update(gameTime,dt,player,tracks,p=>lureFor(devices,p,gameTime),visionRange(layout,devices,player));
-  if(outcome.spawned)hud.say('또각! 바로 뒤에서 누군가 나타났다. 달려!');
+  const looks=[...encounter.looks,STALKER_LOOK];
+  if(outcome.spawnedSlot!==undefined){const look=looks[outcome.spawnedSlot];hud.say(`또각. ${look.name}가 숨을 들이쉰다. “${look.pursuit}”`);}
+  if(outcome.lungingSlot!==undefined)hud.say(`${looks[outcome.lungingSlot].name}가 두 팔을 벌렸다. 지금 옆으로 피해!`);
   if(outcome.hits>0)damage();
   deviceBeat-=dt;
   if(deviceBeat<=0){deviceBeat=1;for(const device of devices)if(device.kind==='gacha'&&device.activeUntil>gameTime){hunt.noise(deviceTarget(device),40);if(audio&&audioBus)playGacha(audio,audioBus,device.point);}}
@@ -215,10 +230,10 @@ function frame(now:number) {
   camera.position.set(player.x,sampleHeight(map,player.x,player.z)+1.6+bob+jump.height,player.z);
   camera.rotation.set(pitch,player.yaw+Math.PI,0);
   dungeon.playerLight.position.set(player.x,1.9,player.z);
-  encounter.draw(tracks,gameTime,hunt.present);stalkerScene.draw(stalker,gameTime,hunt.present[2]);deviceScene.draw(gameTime);
+  encounter.draw(tracks,gameTime,hunt.present,player);stalkerScene.draw(stalker,gameTime,hunt.present[2],player);deviceScene.draw(gameTime);
   for(const device of devices)if(device.kind==='switch')dungeon.lights[device.room].visible=device.lit;
-  hud.stalkerStatus(stalker.sealed,stalker.awakened,insideSeal(stalker.body,seals),hunt.present[2]);
-  hud.exploration(gameTime,hunt.active().length,nearestDevice(devices,player),rearThreat(layout,player,hunt.active()));
+  hud.stalkerStatus(stalker.sealed,stalker.awakened,insideSeal(stalker.body,seals),hunt.present[2],tableauSeen[2]);
+  hud.exploration(gameTime,hunt.active().length,nearestDevice(devices,player),rearThreatDirection(layout,player,hunt.active()));
   puzzleScene.update(player,running?dt:0);
   hud.update(survival,{gait:gait.gait,material:materialAt(),noise,speed:gait.currentSpeed},running?dt:0);
   renderer.render(scene,camera);

@@ -23,11 +23,11 @@ describe('rear ambush',()=>{
   for(let z=0;z<Math.floor(player.z);z++)cells.fill(0,z*layout.size,(z+1)*layout.size);
   expect(chooseSpawn({...layout,cells},player)).toBeUndefined();
  });
- it('starts pursuit without immediate contact damage after the quiet opening',()=>{
+ it('turns and breathes before pursuit without immediate contact damage after the quiet opening',()=>{
   const layout=createDungeonLayout('ambush'),open={...layout,cells:new Uint8Array(layout.cells.length).fill(1)};
   const player={...layout.start,yaw:Math.PI},hunt=createHunt(open,layout.spawns.slice(0,2).map(createMaiden));
   expect(hunt.update(24.99,0,player,[],()=>undefined,18).spawned).toBe(false);
   const result=hunt.update(25,0,player,[],()=>undefined,18);
-  expect(result.spawned).toBe(true);expect(result.hits).toBe(0);expect(hunt.active()[0].mode).toBe('chase');
+  expect(result.spawned).toBe(true);expect(result.hits).toBe(0);expect(hunt.active()[0].mode).toBe('notice');
  });
 });

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { createFaceTexture } from './face';
 import type { MaidenLook } from '../entities/maiden-variants';
+import type { MaidenMode } from '../entities/maiden';
 import { MAIDEN_LOOKS } from '../entities/maiden-variants';
 
 const PALETTE={skin:0xf0c9b7,hair:0x242233,shine:0x454055,dress:0x343246,trim:0xd7c6a5,ivory:0xeee6d8} as const;
@@ -40,8 +41,10 @@ export function createMaidenModel(look:MaidenLook=MAIDEN_LOOKS[1]) {
   // Narrow chin and ears keep the face adult rather than chibi.
   ellipsoid(head,skin,0,-.11,.023,.124,.126,.116);
   for(const side of [-1,1])ellipsoid(head,skin,side*.173,-.015,0,.033,.055,.029);
-  const face=new THREE.Mesh(new THREE.PlaneGeometry(.30,.34),new THREE.MeshBasicMaterial({map:createFaceTexture(look.eyes),transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1}));
+  const face=new THREE.Mesh(new THREE.PlaneGeometry(.30,.34),new THREE.MeshBasicMaterial({map:createFaceTexture(look.eyes),transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1,side:THREE.DoubleSide}));
   face.position.set(0,-.018,.151);head.add(face);
+  const eyeWhite=new THREE.MeshBasicMaterial({color:0xfff8f0}),pupil=new THREE.MeshBasicMaterial({color:look.eyes});
+  for(const side of [-1,1]){ellipsoid(head,eyeWhite,side*.068,.025,.158,.052,.029,.012);ellipsoid(head,pupil,side*.068,.025,.171,.017,.021,.008);}
   const cap=new THREE.Mesh(new THREE.SphereGeometry(.188,32,20,0,Math.PI*2,0,Math.PI*.44),hair);cap.scale.set(1,1.27,.91);cap.position.set(0,.022,-.014);head.add(cap);
   const curtain=new THREE.Group();group.add(curtain);
   const positions:number[]=[],indices:number[]=[];
@@ -83,11 +86,20 @@ export function createMaidenModel(look:MaidenLook=MAIDEN_LOOKS[1]) {
     ellipsoid(leg,cloth,0,-.699,.035,.055,.053,.112);
     const heel=new THREE.Mesh(new THREE.CylinderGeometry(.016,.013,.08,8),cloth);heel.position.set(0,-.755,-.03);leg.add(heel);
   }
-  return {group,animate(time:number,moving:boolean,attacking:boolean,stunned:boolean){
+  if(look.routine==='mirror'){
+    const lipstick=new THREE.Mesh(new THREE.CylinderGeometry(.025,.029,.18,10),new THREE.MeshStandardMaterial({color:0xff245f,emissive:0xa30036,emissiveIntensity:1}));
+    lipstick.position.set(-.01,-.54,.055);arms[0].add(lipstick);
+  }
+  return {group,animate(time:number,moving:boolean,mode:MaidenMode,observing=false,lookYaw=0){
     const swing=moving?Math.sin(time*8)*.38:0;
+    const attacking=mode==='lunge'||mode==='attack';
+    const noticing=mode==='notice';
+    const stunned=mode==='stunned';
     legs.forEach((leg,i)=>{leg.rotation.x=(i===0?1:-1)*swing;});
-    arms.forEach((arm,i)=>{arm.rotation.x=attacking?-1.2:(i===0?-1:1)*swing*.65;});
-    curtain.rotation.x=moving?Math.sin(time*8)*.018:0;
+    arms.forEach((arm,i)=>{arm.rotation.x=attacking?-1.2:observing&&i===0&&look.routine==='mirror'?-.3:(i===0?-1:1)*swing*.65;arm.rotation.z=observing&&i===0&&look.routine==='mirror'?2.35:0;});
+    curtain.rotation.x=moving?Math.sin(time*8)*.028:Math.sin(time*.8)*.012;
     head.rotation.z=stunned?.18:0;
+    head.rotation.y=noticing?Math.max(-1.35,Math.min(1.35,lookYaw)):observing?lookYaw+Math.sin(time*.45)*.025:0;
+    curtain.rotation.y=head.rotation.y;
   }};
 }

@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import {createDungeonLayout,hasDungeonSight,isDungeonBlocked} from '../src/gen/dungeon';
 import {createMaiden} from '../src/entities/maiden';
-import {createHunt,rearThreat,chooseSpawn} from '../src/systems/hunt';
+import {createHunt,rearThreat,rearThreatDirection,chooseSpawn} from '../src/systems/hunt';
 import {createDevices,activateDevice,lureFor,visionRange,deviceTarget,nearestDevice} from '../src/systems/devices';
 
 describe('quiet opening, bounded population and sensory warning',()=>{
@@ -41,6 +41,29 @@ describe('quiet opening, bounded population and sensory warning',()=>{
   const maiden=createMaiden({x:player.x,z:player.z-2});maiden.mode='chase';
   const cells=layout.cells.slice();cells[Math.floor(player.z-1)*layout.size+Math.floor(player.x)]=0;
   expect(rearThreat({...layout,cells},player,[maiden])).toBe(0);
+ });
+ it('reports which side a pursuing woman is approaching from',()=>{
+  const layout=createDungeonLayout('warning'),player={...layout.start,yaw:0};
+  const left=createMaiden({x:player.x-2,z:player.z-2});left.mode='chase';
+  const right=createMaiden({x:player.x+2,z:player.z-2});right.mode='chase';
+  expect(rearThreatDirection(layout,player,[left]).side).toBe('left');
+  expect(rearThreatDirection(layout,player,[right]).side).toBe('right');
+ });
+ it('gives a visible turn-and-breathe warning before a spawned pursuit begins',()=>{
+  const layout=createDungeonLayout('opening'),hunt=createHunt(layout,layout.spawns.slice(0,2).map(createMaiden));
+  const yaw=[0,Math.PI/2,Math.PI,Math.PI*1.5].find(yaw=>chooseSpawn(layout,{...layout.start,yaw}));
+  if(yaw===undefined)throw new Error('Fixture needs rear space');
+  const outcome=hunt.update(100,.01,{...layout.start,yaw},[],()=>undefined,18);
+  expect(outcome.spawnedSlot).toBe(0);
+  expect(hunt.active()[0].mode).toBe('notice');
+ });
+ it('lets an observed woman turn from her routine before following instead of teleporting',()=>{
+  const layout=createDungeonLayout('observed'),maiden=createMaiden(layout.spawns[1]),hunt=createHunt(layout,[maiden,createMaiden(layout.spawns[2])]);
+  const before={x:maiden.x,z:maiden.z};hunt.observe(0);
+  const outcome=hunt.update(25,.01,{...layout.start,yaw:0},[],()=>undefined,18);
+  expect(outcome.spawnedSlot).toBe(0);
+  expect({x:maiden.x,z:maiden.z}).toEqual(before);
+  expect(maiden.mode).toBe('notice');
  });
 });
 describe('interactive dungeon devices',()=>{

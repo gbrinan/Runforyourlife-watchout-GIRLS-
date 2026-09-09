@@ -1,0 +1,10 @@
+{
+  "seed": "eve-388",
+  "captures": [
+    "qa/eve-intro-1280.png",
+    "qa/eve-observation-1280.png",
+    "qa/eve-observation-mobile-1280.png"
+  ],
+  "errors": [],
+  "observation": "이브가 TV 속 말 영상을 본다. 몸은 화면을 향한 채 목만 당신 쪽으로 꺾인다."
+}

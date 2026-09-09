@@ -1,0 +1,22 @@
+{
+  "seed": "familiar-371",
+  "captures": [
+    "qa/familiar-intro-1280.png",
+    "qa/familiar-observation-1280.png",
+    "qa/familiar-observation-mobile-1280.png",
+    "qa/familiar-notice-1280.png",
+    "qa/familiar-direction-left-1280.png",
+    "qa/familiar-direction-right-1280.png",
+    "qa/familiar-lunge-1280.png",
+    "qa/familiar-lunge-front-1280.png"
+  ],
+  "errors": [],
+  "observation": "세라가 깨진 거울에 립스틱을 긋는다. 몸은 거울을 향한 채 목만 당신 쪽으로 꺾인다.",
+  "notice": "또각. 세라가 숨을 들이쉰다. “나 예뻐? 왜 대답 안 해?”",
+  "directionWarnings": [
+    "왼쪽 뒤 · 하이힐 소리가 가까워진다",
+    "오른쪽 뒤 · 하이힐 소리가 가까워진다"
+  ],
+  "lunge": "세라가 두 팔을 벌렸다. 지금 옆으로 피해!",
+  "rearWarning": "바로 뒤 · 하이힐 소리가 가까워진다"
+}
