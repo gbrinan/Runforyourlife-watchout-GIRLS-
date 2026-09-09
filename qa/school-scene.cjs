@@ -26,7 +26,7 @@ const {chromium}=require('C:/Users/user/.cache/codex-runtimes/codex-primary-runt
     await page.keyboard.press('Escape');await shot('paused');
     if(await page.evaluate(()=>window.qaContext.state)!=='suspended')throw Error('Pause did not suspend audio');
    }else{
-    await page.keyboard.down('KeyQ');await page.waitForTimeout(300);await page.keyboard.up('KeyQ');
+    await page.keyboard.down('KeyQ');await page.waitForTimeout(150);await page.keyboard.up('KeyQ');
     await page.keyboard.down('ArrowDown');await page.waitForTimeout(750);await page.keyboard.up('ArrowDown');await shot('ritual');
    }
    if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Horizontal overflow');
