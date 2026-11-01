@@ -1,5 +1,7 @@
 # 캔디마운틴까지 (Unicorn Horror)
 
+![Runforyourlife-watchout-GIRLS-](.github/banner.jpg)
+
 1인칭 프로시저럴 유니콘 서바이벌 호러. 에셋 파일 없이 지형과 사운드를 모두 런타임에 생성한다.
 기획서: `docs/GDD.md`
 
